@@ -1,33 +1,39 @@
 package BookStore;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 import java.util.Calendar;
-import Books.Product;
+
+import Books.*;
 import Books.Interfaces.SaleableProduct;
 import Handlers.Interfaces.*;
 import Handlers.*;
 
 public class BookStore {
 
-    private Map<String, Product> inventory;
+    private List<Product> inventory;
 
     public BookStore() {
-        inventory = new HashMap<>();
+        inventory = new ArrayList<>();
     }
 
     public void addBook(Product book) {
-        inventory.put(book.getId(), book);
+        Product oldProduct = getBook(book.getId());
+        if(oldProduct instanceof PaperBook ){
+            ((PaperBook)oldProduct).increaseStock(((PaperBook)book).getStock());
+            return ;
+        }else if(oldProduct instanceof EBook) {
+            return;
+        }
+        inventory.add(book);
         System.out.println("Quantum book store added book: " + book.getTitle() + " (" + book.getId() + ")" + "for : "
                 + book.getPrice() + ".LE");
     }
 
     public Product getBook(String isbn) {
-        for (Map.Entry<String, Product> entry : inventory.entrySet()) {
-            if (entry.getKey().equals(isbn)) {
-                return entry.getValue();
+          for (Product book : inventory) {
+            if (book.getId().equals(isbn)) {
+                return book;
             }
         }
         return null;
@@ -50,25 +56,23 @@ public class BookStore {
         return totalPrice;
     }
 
-    public List<Product> removeOutdatedBooks(int maxYears) {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        List<Product> outdatedBooks = new ArrayList<>();
-        List<String> toRemove = new ArrayList<>();
+   public List<Product> removeOutdatedBooks(int maxYears) {
+    List<Product> res = new ArrayList<>();
+    Iterator<Product> iterator = inventory.iterator();
+    int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
-        for (Map.Entry<String, Product> entry : inventory.entrySet()) {
-            Product book = entry.getValue();
-            if (currentYear - book.getYear() > maxYears) {
-                outdatedBooks.add(book);
-                toRemove.add(entry.getKey());
-            }
+    while (iterator.hasNext()) {
+        Product book = iterator.next();
+        int bookYear = book.getYear();
+        if (currentYear - bookYear > maxYears) {
+            res.add(book);
+            iterator.remove(); 
         }
-
-        for (String isbn : toRemove) {
-            inventory.remove(isbn);
-        }
-
-        return outdatedBooks;
     }
+
+    return res;
+}
+
 
     public int getInventoryCount() {
         return inventory.size();
