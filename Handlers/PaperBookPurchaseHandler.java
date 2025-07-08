@@ -14,14 +14,14 @@ class PaperBookPurchaseHandler extends PurchaseHandler {
     @Override
     public double handlePurchase(Product product, int quantity, Object customerInfo) {
         if (!(product instanceof PaperBook)) {
-            throw new IllegalArgumentException("Quantum Book Store: Invalid book type !!");
+            throw new IllegalArgumentException("Invalid book type !!");
         }
 
         PaperBook paperBook = (PaperBook) product;
 
         if (!paperBook.isForSale()) {
             throw new IllegalStateException(
-                    "Quantum Book Store: This book is not for sale: " + paperBook.getTitle() + "!!");
+                    "This book is not for sale: " + paperBook.getTitle() + "!!");
         }
 
         paperBook.decreaseStock(quantity);

@@ -6,8 +6,8 @@ import Books.Interfaces.SaleableProduct;
 public class EBook extends Book implements EmailableProduct, SaleableProduct {
     private String fileType;
 
-    public EBook(String isbn, String title, String author, double price, int publishYear, String fileType) {
-        super(isbn, title, author, price, publishYear);
+    public EBook(String isbn, String title,double price, int publishYear, String fileType) {
+        super(isbn, title, price, publishYear);
         this.fileType = fileType;
     }
 

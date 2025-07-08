@@ -26,7 +26,7 @@ public class BookStore {
             return;
         }
         inventory.add(book);
-        System.out.println("Quantum book store added book: " + book.getTitle() + " (" + book.getId() + ")" + "for : "
+        System.out.println(" Added book: " + book.getTitle() + " (" + book.getId() + ")" + "for : "
                 + book.getPrice() + ".LE");
     }
 
@@ -43,13 +43,13 @@ public class BookStore {
         Product book = getBook(isbn);
 
         if (book == null) {
-            throw new IllegalArgumentException("Quantum book store: book with ISBN " + isbn + " is not found !!");
+            throw new IllegalArgumentException("Book with ISBN " + isbn + " is not found !!");
         }
 
         if (!(book instanceof SaleableProduct))
-            throw new IllegalArgumentException("Quantum book store: book is not saleable");
+            throw new IllegalArgumentException("Book is not saleable !!");
         if (!((SaleableProduct) book).isForSale())
-            throw new IllegalArgumentException("Quantum book store: book is not saleable");
+            throw new IllegalArgumentException("Book is not saleable !!");
 
         PurchaseHandler handler = PurchaseHandlerFactory.createHandler(book);
         double totalPrice = handler.handlePurchase(book, quantity, customerInfo);

@@ -14,14 +14,14 @@ class EBookPurchaseHandler extends PurchaseHandler {
     @Override
     public double handlePurchase(Product product, int quantity, Object customerInfo) {
         if (!(product instanceof EBook)) {
-            throw new IllegalArgumentException("Quantum Book Store: Invalid book type !!");
+            throw new IllegalArgumentException("Invalid book type !!");
         }
 
         EBook eBook = (EBook) product;
 
         if (!eBook.isForSale()) {
             throw new IllegalStateException(
-                    "Quantum Book Store: THIS book is not for sale: " + eBook.getTitle() + "!!");
+                    "THIS book is not for sale: " + eBook.getTitle() + "!!");
         }
 
         double totalPrice = eBook.getPrice() * quantity;

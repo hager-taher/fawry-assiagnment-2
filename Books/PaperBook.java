@@ -6,8 +6,8 @@ import Books.Interfaces.ShippableProduct;
 public class PaperBook extends Book implements ShippableProduct, SaleableProduct {
     private int stock;
 
-    public PaperBook(String isbn, String title, String author, double price, int publishYear, int stock) {
-        super(isbn, title, author, price, publishYear);
+    public PaperBook(String isbn, String title, double price, int publishYear, int stock) {
+        super(isbn, title ,price, publishYear);
         this.stock = stock;
     }
 

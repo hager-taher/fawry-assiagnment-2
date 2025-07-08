@@ -3,14 +3,12 @@ package Books;
 public class Book extends Product {
     protected String isbn;
     protected String title;
-    protected String author;
     protected double price;
     protected int publishYear;
 
-    public Book(String isbn, String title, String author, double price, int publishYear) {
+    public Book(String isbn, String title, double price, int publishYear) {
         this.isbn = isbn;
         this.title = title;
-        this.author = author;
         this.price = price;
         this.publishYear = publishYear;
     }
@@ -35,8 +33,6 @@ public class Book extends Product {
         return publishYear;
     }
 
-    public String getAuthor() {
-        return author;
-    }
+    
 
 }

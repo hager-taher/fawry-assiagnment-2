@@ -1,6 +1,6 @@
-import QuantumBookstoreFullTest.QuantumBookstoreFullTest;
+import Test.Test;
 public class Main {
     public static void main(String[] args) {
-        QuantumBookstoreFullTest.run();
+        Test.run();
     }
 }
