@@ -30,10 +30,10 @@ public class PaperBook extends Book implements ShippableProduct, SaleableProduct
     }
 
     public void decreaseStock(int quantity) {
-        if (quantity > stock) {
-            throw new IllegalArgumentException("Not enough stock for book " + title + " (ISBN: " + isbn + ")");
-        }
-        stock -= quantity;
+        if (quantity <= stock) {
+            stock -= quantity;
+        }else
+            throw new IllegalArgumentException("The requested quantity is greater than the stock you request " + quantity + " and in stock only " + stock);
     }
 
 }

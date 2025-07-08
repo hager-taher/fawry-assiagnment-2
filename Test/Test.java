@@ -1,3 +1,4 @@
+
 package Test;
 
 import BookStore.BookStore;
@@ -15,13 +16,13 @@ public class Test {
 
     static private void setUp() {
         bookStore = new BookStore();
-        System.out.println("Setting up new test scenario.");
+        System.out.println("\n--- Setting up new test scenario ---");
     }
 
     static public void testAddBook() {
         setUp();
         System.out.println("Running testAddBook...");
-        PaperBook paperBook = new PaperBook("111-2223334445", "The Silent Patient",  32.50, 2025, 8);
+        PaperBook paperBook = new PaperBook("111-2223334445", "The Silent Patient", 32.50, 2025, 8);
         bookStore.addBook(paperBook);
         Product retrievedBook = bookStore.getBook("111-2223334445");
 
@@ -30,11 +31,12 @@ public class Test {
         } else {
             System.out.println("TestAddBook FAILED. Book not found or title mismatch.");
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testBuyPaperBookSuccessfully() {
         setUp();
-        System.out.println(" Running testBuyPaperBookSuccessfully...");
+        System.out.println("Running testBuyPaperBookSuccessfully...");
         PaperBook paperBook = new PaperBook("222-3334445556", "Educated", 18.00, 2025, 6);
         bookStore.addBook(paperBook);
 
@@ -49,20 +51,17 @@ public class Test {
         }
 
         if (success && Math.abs(finalPrice - 36.00) < 0.001 && paperBook.getStock() == 4) {
-            System.out.println(
-                    "TestBuyPaperBookSuccessfully completed successfully. Remaining stock: "
-                            + paperBook.getStock());
+            System.out.println("TestBuyPaperBookSuccessfully completed successfully. Remaining stock: " + paperBook.getStock());
         } else {
-            System.out.println(
-                    "TestBuyPaperBookSuccessfully FAILED. Final price or stock incorrect. Price: "
-                            + finalPrice + ", Stock: " + paperBook.getStock());
+            System.out.println("TestBuyPaperBookSuccessfully FAILED. Final price or stock incorrect. Price: " + finalPrice + ", Stock: " + paperBook.getStock());
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testBuyEBookSuccessfully() {
         setUp();
         System.out.println("Running testBuyEBookSuccessfully...");
-        EBook eBook = new EBook("333-4445556667", "Atomic Habits",  22.00, 2025, "EPUB");
+        EBook eBook = new EBook("333-4445556667", "Atomic Habits", 22.00, 2025, "EPUB");
         bookStore.addBook(eBook);
 
         EmailInfo emailInfo = new EmailInfo("reader@domain.com");
@@ -78,37 +77,33 @@ public class Test {
         if (success && Math.abs(finalPrice - 22.00) < 0.001) {
             System.out.println("testBuyEBookSuccessfully completed successfully.");
         } else {
-            System.out.println(
-                    " testBuyEBookSuccessfully FAILED. Final price incorrect. Price: " + finalPrice);
+            System.out.println("testBuyEBookSuccessfully FAILED. Final price incorrect. Price: " + finalPrice);
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testBuyBookInsufficientStock() {
         setUp();
         System.out.println("Running testBuyBookInsufficientStock...");
-        PaperBook paperBook = new PaperBook("444-5556667778", "Becoming",  20.00, 2025, 1);
+        PaperBook paperBook = new PaperBook("444-5556667778", "Becoming", 20.00, 2025, 1);
         bookStore.addBook(paperBook);
 
         ShippingInfo shippingInfo = new ShippingInfo("789 Maple Rd, Toronto, Canada");
         boolean exceptionThrown = false;
         String exceptionMessage = "";
         try {
-            bookStore.buyBook("444-5556667778", 3, shippingInfo);
+            bookStore.buyBook("444-5556667778", 5, shippingInfo);
         } catch (IllegalArgumentException e) {
             exceptionThrown = true;
             exceptionMessage = e.getMessage();
         }
 
-        if (exceptionThrown && exceptionMessage.contains("The requested quantity is greater than the stock")
-                && paperBook.getStock() == 1) {
-            System.out
-                    .println("TestBuyBookInsufficientStock completed successfully. Stock remains: "
-                            + paperBook.getStock());
+        if (exceptionThrown && exceptionMessage.contains("The requested quantity is greater than the stock you request 5 and in stock only 1") && paperBook.getStock() == 1) {
+            System.out.println("testBuyBookInsufficientStock completed successfully. Stock remains: " + paperBook.getStock());
         } else {
-            System.out.println(
-                    "testBuyBookInsufficientStock FAILED. No exception or wrong message, or stock changed. Message: "
-                            + exceptionMessage + ", Stock: " + paperBook.getStock());
+            System.out.println("testBuyBookInsufficientStock FAILED. No exception or wrong message, or stock changed. Message: " + exceptionMessage + ", Stock: " + paperBook.getStock());
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testBuyNonExistentBook() {
@@ -124,13 +119,12 @@ public class Test {
             exceptionMessage = e.getMessage();
         }
 
-        if (exceptionThrown && exceptionMessage.contains("book not exist")) {
+        if (exceptionThrown && exceptionMessage.contains("Book is not exist !!")) {
             System.out.println("testBuyNonExistentBook completed successfully.");
         } else {
-            System.out.println(
-                    " testBuyNonExistentBook FAILED. No exception or wrong message. Message: "
-                            + exceptionMessage);
+            System.out.println("testBuyNonExistentBook FAILED. No exception or wrong message. Message: " + exceptionMessage);
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testBuyShowCaseBook() {
@@ -150,63 +144,56 @@ public class Test {
             exceptionMessage = e.getMessage();
         }
 
-        if (exceptionThrown && exceptionMessage.contains("book is not saleable")) {
-            System.out.println(" testBuyShowCaseBook completed successfully.");
+        if (exceptionThrown && exceptionMessage.contains("Book is not saleable !!")) {
+            System.out.println("testBuyShowCaseBook completed successfully.");
         } else {
-            System.out
-                    .println("testBuyShowCaseBook FAILED. No exception or wrong message. Message: "
-                            + exceptionMessage);
+            System.out.println("testBuyShowCaseBook FAILED. No exception or wrong message. Message: " + exceptionMessage);
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testRemoveAndReturnOutDatedBooks() {
         setUp();
-        System.out.println(" Running testRemoveAndReturnOutDatedBooks...");
+        System.out.println("Running testRemoveAndReturnOutDatedBooks...");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -3);
-        PaperBook oldBook1 = new PaperBook("OLD-A1", "Ancient Civilizations", 12.00, 2025, 4);
+        PaperBook oldBook1 = new PaperBook("OLD-A1", "Ancient Civilizations", 12.00, 2022, 4); // Adjusted year to be outdated
         bookStore.addBook(oldBook1);
 
         cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -6);
-        EBook oldBook2 = new EBook("OLD-B2", "Old Tech Manual" , 25.00, 2020, "MOBI");
+        EBook oldBook2 = new EBook("OLD-B2", "Old Tech Manual", 25.00, 2019, "MOBI"); // Adjusted year to be outdated
         bookStore.addBook(oldBook2);
 
         PaperBook currentBook = new PaperBook("NEW-C3", "The Future of AI", 40.00, 2025, 7);
         bookStore.addBook(currentBook);
 
-        List<Product> removedBooks = bookStore.removeOutdatedBooks(2);
+        List<Product> removedBooks = bookStore.removeOutdatedBooks(2); // Assuming threshold is 2 years
 
         boolean testPassed = true;
         if (removedBooks.size() != 2) {
-            System.out.println(
-                    "testRemoveAndReturnOutDatedBooks FAILED. Incorrect number of removed books: "
-                            + removedBooks.size());
+            System.out.println("testRemoveAndReturnOutDatedBooks FAILED. Incorrect number of removed books: " + removedBooks.size());
             testPassed = false;
         }
         if (!removedBooks.contains(oldBook1) || !removedBooks.contains(oldBook2)) {
-            System.out.println(
-                    "testRemoveAndReturnOutDatedBooks FAILED. Removed list does not contain expected books.");
+            System.out.println("testRemoveAndReturnOutDatedBooks FAILED. Removed list does not contain expected books.");
             testPassed = false;
         }
         if (bookStore.getBook("OLD-A1") != null || bookStore.getBook("OLD-B2") != null) {
-            System.out.println(
-                    "testRemoveAndReturnOutDatedBooks FAILED. Outdated books still in inventory.");
+            System.out.println("testRemoveAndReturnOutDatedBooks FAILED. Outdated books still in inventory.");
             testPassed = false;
         }
         if (bookStore.getBook("NEW-C3") == null) {
-            System.out
-                    .println(" testRemoveAndReturnOutDatedBooks FAILED. Current book was removed.");
+            System.out.println("testRemoveAndReturnOutDatedBooks FAILED. Current book was removed.");
             testPassed = false;
         }
 
         if (testPassed) {
-            System.out.println(
-                    "testRemoveAndReturnOutDatedBooks completed successfully. Removed books count: "
-                            + removedBooks.size());
+            System.out.println("testRemoveAndReturnOutDatedBooks completed successfully. Removed books count: " + removedBooks.size());
         } else {
             System.out.println("testRemoveAndReturnOutDatedBooks FAILED.");
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testDecreaseAndIncreaseStock() {
@@ -240,16 +227,12 @@ public class Test {
 
         if (exceptionThrown && exceptionMessage.contains("The requested quantity is greater than the stock")
                 && paperBook.getStock() == 11) {
-            System.out.println(
-                    " testDecreaseAndIncreaseStock (insufficient decrease) completed successfully. Stock remains: "
-                            + paperBook.getStock());
+            System.out.println("testDecreaseAndIncreaseStock (insufficient decrease) completed successfully. Stock remains: " + paperBook.getStock());
         } else {
-            System.out.println(
-                    "testDecreaseAndIncreaseStock (insufficient decrease) FAILED. No exception or wrong message, or stock changed. Message: "
-                            + exceptionMessage + ", Stock: " + paperBook.getStock());
+            System.out.println("testDecreaseAndIncreaseStock (insufficient decrease) FAILED. No exception or wrong message, or stock changed. Message: " + exceptionMessage + ", Stock: " + paperBook.getStock());
         }
-        System.out.println(
-                "testDecreaseAndIncreaseStock completed. Final stock: " + paperBook.getStock());
+        System.out.println("testDecreaseAndIncreaseStock completed. Final stock: " + paperBook.getStock());
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void testGetBookNotFound() {
@@ -259,12 +242,16 @@ public class Test {
         if (book == null) {
             System.out.println("testGetBookNotFound completed successfully.");
         } else {
-            System.out.println(" testGetBookNotFound FAILED. Book found when it should not be.");
+            System.out.println("testGetBookNotFound FAILED. Book found when it should not be.");
         }
+        System.out.println("---------------------------------------------------------------------------------");
     }
 
     static public void run() {
-        System.out.println("Starting all tests...");
+        System.out.println("=================================================================================");
+        System.out.println("                         Starting all tests...");
+        System.out.println("=================================================================================");
+
         testAddBook();
         testBuyPaperBookSuccessfully();
         testBuyEBookSuccessfully();
@@ -274,6 +261,9 @@ public class Test {
         testRemoveAndReturnOutDatedBooks();
         testDecreaseAndIncreaseStock();
         testGetBookNotFound();
-        System.out.println(" All tests finished.");
+
+        System.out.println("\n=================================================================================");
+        System.out.println("                            All tests finished.");
+        System.out.println("=================================================================================");
     }
 }
