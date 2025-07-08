@@ -1,0 +1,39 @@
+package Books;
+
+import Books.Interfaces.SaleableProduct;
+import Books.Interfaces.ShippableProduct;
+
+public class PaperBook extends Book implements ShippableProduct, SaleableProduct {
+    private int stock;
+
+    public PaperBook(String isbn, String title, String author, double price, int publishYear, int stock) {
+        super(isbn, title, author, price, publishYear);
+        this.stock = stock;
+    }
+
+    @Override
+    public boolean isShippable() {
+        return stock > 0;
+    }
+
+    @Override
+    public boolean isForSale() {
+        return true;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void increaseStock(int quantity) {
+        stock += quantity;
+    }
+
+    public void decreaseStock(int quantity) {
+        if (quantity > stock) {
+            throw new IllegalArgumentException("Not enough stock for book " + title + " (ISBN: " + isbn + ")");
+        }
+        stock -= quantity;
+    }
+
+}

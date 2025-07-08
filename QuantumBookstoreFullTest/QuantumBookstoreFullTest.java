@@ -1,0 +1,279 @@
+package QuantumBookstoreFullTest;
+
+import BookStore.BookStore;
+import Books.EBook;
+import Books.PaperBook;
+import Books.Product;
+import Books.ShowcaseBook;
+import Services.*;
+import java.util.Calendar;
+import java.util.List;
+
+public class QuantumBookstoreFullTest {
+
+    static private BookStore bookStore;
+
+    static private void setUp() {
+        bookStore = new BookStore();
+        System.out.println("Quantum book store: Setting up new test scenario.");
+    }
+
+    static public void testAddBook() {
+        setUp();
+        System.out.println("Quantum book store: Running testAddBook...");
+        PaperBook paperBook = new PaperBook("111-2223334445", "The Silent Patient", "Alex Michaelides", 32.50, 2025, 8);
+        bookStore.addBook(paperBook);
+        Product retrievedBook = bookStore.getBook("111-2223334445");
+
+        if (retrievedBook != null && "The Silent Patient".equals(retrievedBook.getTitle())) {
+            System.out.println("Quantum book store: testAddBook completed successfully.");
+        } else {
+            System.out.println("Quantum book store: testAddBook FAILED. Book not found or title mismatch.");
+        }
+    }
+
+    static public void testBuyPaperBookSuccessfully() {
+        setUp();
+        System.out.println("Quantum book store: Running testBuyPaperBookSuccessfully...");
+        PaperBook paperBook = new PaperBook("222-3334445556", "Educated", "Tara Westover", 18.00, 2025, 6);
+        bookStore.addBook(paperBook);
+
+        ShippingInfo shippingInfo = new ShippingInfo("456 Baker St, London, UK");
+        double finalPrice = 0.0;
+        boolean success = false;
+        try {
+            finalPrice = bookStore.buyBook("222-3334445556", 2, shippingInfo);
+            success = true;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Quantum book store: Exception during testBuyPaperBookSuccessfully: " + e.getMessage());
+        }
+
+        if (success && Math.abs(finalPrice - 36.00) < 0.001 && paperBook.getStock() == 4) {
+            System.out.println(
+                    "Quantum book store: testBuyPaperBookSuccessfully completed successfully. Remaining stock: "
+                            + paperBook.getStock());
+        } else {
+            System.out.println(
+                    "Quantum book store: testBuyPaperBookSuccessfully FAILED. Final price or stock incorrect. Price: "
+                            + finalPrice + ", Stock: " + paperBook.getStock());
+        }
+    }
+
+    static public void testBuyEBookSuccessfully() {
+        setUp();
+        System.out.println("Quantum book store: Running testBuyEBookSuccessfully...");
+        EBook eBook = new EBook("333-4445556667", "Atomic Habits", "James Clear", 22.00, 2025, "EPUB");
+        bookStore.addBook(eBook);
+
+        EmailInfo emailInfo = new EmailInfo("reader@domain.com");
+        double finalPrice = 0.0;
+        boolean success = false;
+        try {
+            finalPrice = bookStore.buyBook("333-4445556667", 1, emailInfo);
+            success = true;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Quantum book store: Exception during testBuyEBookSuccessfully: " + e.getMessage());
+        }
+
+        if (success && Math.abs(finalPrice - 22.00) < 0.001) {
+            System.out.println("Quantum book store: testBuyEBookSuccessfully completed successfully.");
+        } else {
+            System.out.println(
+                    "Quantum book store: testBuyEBookSuccessfully FAILED. Final price incorrect. Price: " + finalPrice);
+        }
+    }
+
+    static public void testBuyBookInsufficientStock() {
+        setUp();
+        System.out.println("Quantum book store: Running testBuyBookInsufficientStock...");
+        PaperBook paperBook = new PaperBook("444-5556667778", "Becoming", "Michelle Obama", 20.00, 2025, 1);
+        bookStore.addBook(paperBook);
+
+        ShippingInfo shippingInfo = new ShippingInfo("789 Maple Rd, Toronto, Canada");
+        boolean exceptionThrown = false;
+        String exceptionMessage = "";
+        try {
+            bookStore.buyBook("444-5556667778", 3, shippingInfo);
+        } catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+
+        if (exceptionThrown && exceptionMessage.contains("The requested quantity is greater than the stock")
+                && paperBook.getStock() == 1) {
+            System.out
+                    .println("Quantum book store: testBuyBookInsufficientStock completed successfully. Stock remains: "
+                            + paperBook.getStock());
+        } else {
+            System.out.println(
+                    "Quantum book store: testBuyBookInsufficientStock FAILED. No exception or wrong message, or stock changed. Message: "
+                            + exceptionMessage + ", Stock: " + paperBook.getStock());
+        }
+    }
+
+    static public void testBuyNonExistentBook() {
+        setUp();
+        System.out.println("Quantum book store: Running testBuyNonExistentBook...");
+        ShippingInfo shippingInfo = new ShippingInfo("101 Riverwalk Dr, Paris, France");
+        boolean exceptionThrown = false;
+        String exceptionMessage = "";
+        try {
+            bookStore.buyBook("000-0000000000", 1, shippingInfo);
+        } catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+
+        if (exceptionThrown && exceptionMessage.contains("book not exist")) {
+            System.out.println("Quantum book store: testBuyNonExistentBook completed successfully.");
+        } else {
+            System.out.println(
+                    "Quantum book store: testBuyNonExistentBook FAILED. No exception or wrong message. Message: "
+                            + exceptionMessage);
+        }
+    }
+
+    static public void testBuyShowCaseBook() {
+        setUp();
+        System.out.println("Quantum book store: Running testBuyShowCaseBook...");
+        ShowcaseBook showCaseBook = new ShowcaseBook("555-6667778889", "The Mona Lisa Mystery (Showcase)", "Dan Vinci",
+                75.00, 2025);
+        bookStore.addBook(showCaseBook);
+
+        ShippingInfo shippingInfo = new ShippingInfo("500 Museum St, Florence, Italy");
+        boolean exceptionThrown = false;
+        String exceptionMessage = "";
+        try {
+            bookStore.buyBook("555-6667778889", 1, shippingInfo);
+        } catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+
+        if (exceptionThrown && exceptionMessage.contains("book is not saleable")) {
+            System.out.println("Quantum book store: testBuyShowCaseBook completed successfully.");
+        } else {
+            System.out
+                    .println("Quantum book store: testBuyShowCaseBook FAILED. No exception or wrong message. Message: "
+                            + exceptionMessage);
+        }
+    }
+
+    static public void testRemoveAndReturnOutDatedBooks() {
+        setUp();
+        System.out.println("Quantum book store: Running testRemoveAndReturnOutDatedBooks...");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -3);
+        PaperBook oldBook1 = new PaperBook("OLD-A1", "Ancient Civilizations", "Professor X", 12.00, 2025, 4);
+        bookStore.addBook(oldBook1);
+
+        cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -6);
+        EBook oldBook2 = new EBook("OLD-B2", "Old Tech Manual", "Engineer Y", 25.00, 2020, "MOBI");
+        bookStore.addBook(oldBook2);
+
+        PaperBook currentBook = new PaperBook("NEW-C3", "The Future of AI", "Dr. Z", 40.00, 2025, 7);
+        bookStore.addBook(currentBook);
+
+        List<Product> removedBooks = bookStore.removeOutdatedBooks(2);
+
+        boolean testPassed = true;
+        if (removedBooks.size() != 2) {
+            System.out.println(
+                    "Quantum book store: testRemoveAndReturnOutDatedBooks FAILED. Incorrect number of removed books: "
+                            + removedBooks.size());
+            testPassed = false;
+        }
+        if (!removedBooks.contains(oldBook1) || !removedBooks.contains(oldBook2)) {
+            System.out.println(
+                    "Quantum book store: testRemoveAndReturnOutDatedBooks FAILED. Removed list does not contain expected books.");
+            testPassed = false;
+        }
+        if (bookStore.getBook("OLD-A1") != null || bookStore.getBook("OLD-B2") != null) {
+            System.out.println(
+                    "Quantum book store: testRemoveAndReturnOutDatedBooks FAILED. Outdated books still in inventory.");
+            testPassed = false;
+        }
+        if (bookStore.getBook("NEW-C3") == null) {
+            System.out
+                    .println("Quantum book store: testRemoveAndReturnOutDatedBooks FAILED. Current book was removed.");
+            testPassed = false;
+        }
+
+        if (testPassed) {
+            System.out.println(
+                    "Quantum book store: testRemoveAndReturnOutDatedBooks completed successfully. Removed books count: "
+                            + removedBooks.size());
+        } else {
+            System.out.println("Quantum book store: testRemoveAndReturnOutDatedBooks FAILED.");
+        }
+    }
+
+    static public void testDecreaseAndIncreaseStock() {
+        setUp();
+        System.out.println("Quantum book store: Running testDecreaseAndIncreaseStock...");
+        PaperBook paperBook = new PaperBook("STK-777", "Inventory Mastery", "Logistics Pro", 14.50, 2025, 9);
+        bookStore.addBook(paperBook);
+
+        paperBook.decreaseStock(4);
+        if (paperBook.getStock() == 5) {
+            System.out.println("Quantum book store: Stock decreased successfully to 5.");
+        } else {
+            System.out.println("Quantum book store: Stock decrease FAILED. Expected 5, got " + paperBook.getStock());
+        }
+
+        paperBook.increaseStock(6);
+        if (paperBook.getStock() == 11) {
+            System.out.println("Quantum book store: Stock increased successfully to 11.");
+        } else {
+            System.out.println("Quantum book store: Stock increase FAILED. Expected 11, got " + paperBook.getStock());
+        }
+
+        boolean exceptionThrown = false;
+        String exceptionMessage = "";
+        try {
+            paperBook.decreaseStock(20);
+        } catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+
+        if (exceptionThrown && exceptionMessage.contains("The requested quantity is greater than the stock")
+                && paperBook.getStock() == 11) {
+            System.out.println(
+                    "Quantum book store: testDecreaseAndIncreaseStock (insufficient decrease) completed successfully. Stock remains: "
+                            + paperBook.getStock());
+        } else {
+            System.out.println(
+                    "Quantum book store: testDecreaseAndIncreaseStock (insufficient decrease) FAILED. No exception or wrong message, or stock changed. Message: "
+                            + exceptionMessage + ", Stock: " + paperBook.getStock());
+        }
+        System.out.println(
+                "Quantum book store: testDecreaseAndIncreaseStock completed. Final stock: " + paperBook.getStock());
+    }
+
+    static public void testGetBookNotFound() {
+        setUp();
+        System.out.println("Quantum book store: Running testGetBookNotFound...");
+        Product book = bookStore.getBook("UNKNOWN-ISBN-1234");
+        if (book == null) {
+            System.out.println("Quantum book store: testGetBookNotFound completed successfully.");
+        } else {
+            System.out.println("Quantum book store: testGetBookNotFound FAILED. Book found when it should not be.");
+        }
+    }
+
+    static public void run() {
+        System.out.println("Quantum book store: Starting all tests...");
+        testAddBook();
+        testBuyPaperBookSuccessfully();
+        testBuyEBookSuccessfully();
+        testBuyBookInsufficientStock();
+        testBuyNonExistentBook();
+        testBuyShowCaseBook();
+        testRemoveAndReturnOutDatedBooks();
+        testDecreaseAndIncreaseStock();
+        testGetBookNotFound();
+        System.out.println("Quantum book store: All tests finished.");
+    }
+}
